@@ -1,0 +1,104 @@
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton,
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.editButton:hover {
+  background: #f3f4f6;
+}
+
+.deleteButton:hover {
+  background: #fee2e2;
+}
+
+.description {
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metaLabel {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.priority {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusSelect {
+  padding: 4px 8px;
+  border: 2px solid;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: white;
+}
+
+.statusSelect:focus {
+  outline: none;
+}
+
+.dueDate {
+  color: #374151;
+  font-weight: 500;
+}

@@ -1,0 +1,89 @@
+.form {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.submitButton {
+  flex: 1;
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitButton:hover {
+  background: #2563eb;
+}
+
+.cancelButton {
+  padding: 12px 24px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelButton:hover {
+  background: #e5e7eb;
+}
