@@ -34,30 +34,34 @@
   color: #1f2937;
 }
 
-.searchBar {
-  flex: 1;
-  max-width: 400px;
-}
-
-.searchInput {
-  width: 100%;
+.searchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 8px 16px;
-  border: 1px solid #e5e7eb;
+  min-height: 36px;
+  background: #3b82f6;
+  color: white;
+  border: none;
   border-radius: 6px;
   font-size: 14px;
-  background: #f9fafb;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.searchInput:focus {
-  outline: none;
-  background: white;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.searchButton:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.searchInput::placeholder {
-  color: #9ca3af;
+.searchIcon {
+  font-size: 16px;
+}
+
+.searchText {
+  font-weight: 500;
 }
 
 .actions {
@@ -78,8 +82,10 @@
 .createButton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 8px 16px;
+  min-height: 36px;
   background: #3b82f6;
   color: white;
   border: none;
@@ -122,12 +128,20 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  overflow: hidden;
+  padding: 0;
 }
 
 .userButton:hover {
   background: #e5e7eb;
   border-color: #d1d5db;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.userAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .userDropdown {
@@ -168,6 +182,42 @@
 .userEmail {
   font-size: 13px;
   color: #6b7280;
+}
+
+.adminButton {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #8b5cf6;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.adminButton:hover {
+  background: #f5f3ff;
+}
+
+.editProfileButton {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.editProfileButton:hover {
+  background: #eff6ff;
 }
 
 .logoutButton {

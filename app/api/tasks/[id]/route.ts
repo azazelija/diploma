@@ -108,13 +108,13 @@ export async function PUT(
     
     if (body.due_date !== undefined) {
       updates.push(`due_date = $${paramIndex}`);
-      sqlParams.push(body.due_date);
+      sqlParams.push(body.due_date === '' ? null : body.due_date);
       paramIndex++;
     }
     
     if (body.completed_at !== undefined) {
       updates.push(`completed_at = $${paramIndex}`);
-      sqlParams.push(body.completed_at);
+      sqlParams.push(body.completed_at === '' ? null : body.completed_at);
       paramIndex++;
     }
     

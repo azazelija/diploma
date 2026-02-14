@@ -10,6 +10,7 @@ interface CreateTaskModalProps {
   onClose: () => void;
   onSubmit: (task: TaskFormData) => void;
   statuses: Array<{ id: number; name: string; color: string }>;
+  users?: Array<{ id: number; username: string }>;
 }
 
 export default function CreateTaskModal({
@@ -17,6 +18,7 @@ export default function CreateTaskModal({
   onClose,
   onSubmit,
   statuses,
+  users = [],
 }: CreateTaskModalProps) {
   const handleSubmit = (formData: TaskFormData) => {
     onSubmit(formData);
@@ -39,6 +41,7 @@ export default function CreateTaskModal({
             onSubmit={handleSubmit}
             onCancel={onClose}
             statuses={statuses}
+            users={users}
           />
         </div>
       </div>

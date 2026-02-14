@@ -3,9 +3,19 @@
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   padding: 12px;
-  cursor: pointer;
+  cursor: grab;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.cardDragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
 }
 
 .card:hover {
@@ -98,4 +108,34 @@
   color: #dc2626;
   background: #fee2e2;
   font-weight: 600;
+}
+
+.assignee {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.assigneeAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.assigneeAvatarPlaceholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }

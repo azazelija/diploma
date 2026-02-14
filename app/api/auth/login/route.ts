@@ -6,25 +6,25 @@ import { cookies } from 'next/headers';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { emailOrLogin, password } = body;
 
     // Валидация
-    if (!email || !password) {
+    if (!emailOrLogin || !password) {
       return NextResponse.json(
-        { success: false, error: 'Email и пароль обязательны' },
+        { success: false, error: 'Email/Логин и пароль обязательны' },
         { status: 400 }
       );
     }
 
-    // Поиск пользователя
+    // Поиск пользователя по email или username
     const result = await query(
-      'SELECT id, email, username, password_hash FROM users WHERE email = $1',
-      [email]
+      'SELECT id, email, username, password_hash FROM users WHERE email = $1 OR username = $1',
+      [emailOrLogin]
     );
 
     if (result.rows.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Неверный email или пароль' },
+        { success: false, error: 'Неверный email/логин или пароль' },
         { status: 401 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     if (!isValid) {
       return NextResponse.json(
-        { success: false, error: 'Неверный email или пароль' },
+        { success: false, error: 'Неверный email/логин или пароль' },
         { status: 401 }
       );
     }

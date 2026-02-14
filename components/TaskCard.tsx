@@ -13,18 +13,34 @@ interface TaskCardProps {
     status_name: string;
     due_date: string | null;
     created_by_name: string;
+    assigned_to?: number | null;
+    assigned_to_name?: string | null;
+  };
+  assignedUser?: {
+    id: number;
+    username: string;
+    first_name?: string;
+    last_name?: string;
+    avatar?: string;
   };
   onEdit: (taskId: number) => void;
   onDelete: (taskId: number) => void;
   onStatusChange: (taskId: number, statusId: number) => void;
   allStatuses: Array<{ id: number; name: string; color: string }>;
+  onDragStart?: (task: any) => void;
+  onDragEnd?: () => void;
+  isDragging?: boolean;
 }
 
 export default function TaskCard({
   task,
+  assignedUser,
   onEdit,
   onDelete,
   allStatuses,
+  onDragStart,
+  onDragEnd,
+  isDragging,
 }: TaskCardProps) {
   const priorityIcons: Record<string, string> = {
     low: '📍',
@@ -43,7 +59,12 @@ export default function TaskCard({
   const isOverdue = task.due_date && new Date(task.due_date) < new Date();
 
   return (
-    <div className={styles.card}>
+    <div 
+      className={`${styles.card} ${isDragging ? styles.cardDragging : ''}`}
+      draggable
+      onDragStart={() => onDragStart?.(task)}
+      onDragEnd={onDragEnd}
+    >
       <div className={styles.cardHeader}>
         <h4 className={styles.cardTitle}>{task.title}</h4>
         <div className={styles.cardMenu}>
@@ -77,6 +98,18 @@ export default function TaskCard({
           <span className={`${styles.dueDate} ${isOverdue ? styles.overdue : ''}`}>
             {format(new Date(task.due_date), 'dd MMM', { locale: ru })}
           </span>
+        )}
+
+        {assignedUser && (
+          <div className={styles.assignee} title={`${assignedUser.first_name || assignedUser.username} ${assignedUser.last_name || ''}`.trim()}>
+            {assignedUser.avatar ? (
+              <img src={assignedUser.avatar} alt="Assignee" className={styles.assigneeAvatar} />
+            ) : (
+              <div className={styles.assigneeAvatarPlaceholder}>
+                {(assignedUser.first_name?.[0] || assignedUser.username[0]).toUpperCase()}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

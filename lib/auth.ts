@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { query } from './db';
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-in-production'
@@ -10,6 +11,16 @@ export interface UserPayload {
   id: number;
   email: string;
   username: string;
+}
+
+export interface FullUser {
+  id: number;
+  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  avatar?: string;
+  role_id: number;
 }
 
 // Хеширование пароля
@@ -35,14 +46,14 @@ export async function createToken(payload: UserPayload): Promise<string> {
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
     const verified = await jwtVerify(token, JWT_SECRET);
-    return verified.payload as UserPayload;
+    return verified.payload as unknown as UserPayload;
   } catch (error) {
     return null;
   }
 }
 
 // Получить текущего пользователя из cookies
-export async function getCurrentUser(): Promise<UserPayload | null> {
+export async function getCurrentUser(): Promise<FullUser | null> {
   const cookieStore = cookies();
   const token = cookieStore.get('token')?.value;
 
@@ -50,7 +61,22 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
     return null;
   }
 
-  return verifyToken(token);
+  const payload = await verifyToken(token);
+  if (!payload) {
+    return null;
+  }
+
+  // Получаем полную информацию о пользователе из БД
+  const result = await query(
+    'SELECT id, email, username, first_name, last_name, avatar, role_id FROM users WHERE id = $1',
+    [payload.id]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return result.rows[0] as FullUser;
 }
 
 // Установить токен в cookies

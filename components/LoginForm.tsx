@@ -5,11 +5,10 @@ import styles from './AuthModal.module.css';
 
 interface LoginFormProps {
   onSuccess: () => void;
-  onSwitchToRegister: () => void;
 }
 
-export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
-  const [email, setEmail] = useState('');
+export default function LoginForm({ onSuccess }: LoginFormProps) {
+  const [emailOrLogin, setEmailOrLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,7 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ emailOrLogin, password }),
       });
 
       const data = await response.json();
@@ -49,17 +48,17 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.field}>
-          <label htmlFor="email" className={styles.label}>
-            Email
+          <label htmlFor="emailOrLogin" className={styles.label}>
+            Email или Логин
           </label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="emailOrLogin"
+            value={emailOrLogin}
+            onChange={(e) => setEmailOrLogin(e.target.value)}
             required
             className={styles.input}
-            placeholder="example@mail.com"
+            placeholder="example@mail.com или username"
           />
         </div>
 
@@ -87,15 +86,6 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
           {loading ? 'Вход...' : 'Войти'}
         </button>
       </form>
-
-      <div className={styles.footer}>
-        <p>
-          Нет аккаунта?{' '}
-          <button onClick={onSwitchToRegister} className={styles.link}>
-            Зарегистрироваться
-          </button>
-        </p>
-      </div>
     </div>
   );
 }

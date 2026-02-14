@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import KanbanBoard from '@/components/KanbanBoard';
+import TaskList from '@/components/TaskList';
 import CreateTaskModal from '@/components/CreateTaskModal';
 import AuthModal from '@/components/AuthModal';
+import EditProfileModal, { ProfileData } from '@/components/EditProfileModal';
+import AdminPanel from '@/components/AdminPanel';
 import TaskForm, { TaskFormData } from '@/components/TaskForm';
 import styles from './page.module.css';
 
@@ -18,6 +21,8 @@ interface Task {
   status_color: string;
   due_date: string | null;
   created_by_name: string;
+  assigned_to?: number | null;
+  assigned_to_name?: string | null;
 }
 
 interface Status {
@@ -30,11 +35,16 @@ interface User {
   id: number;
   email: string;
   username: string;
+  first_name?: string;
+  last_name?: string;
+  avatar?: string;
+  role_id: number;
 }
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -42,18 +52,28 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+
+  // Показать toast уведомление
+  const showSuccessToast = (message: string) => {
+    setSuccessToast(message);
+    setTimeout(() => setSuccessToast(null), 3000);
+  };
 
   // Загрузка пользователя при монтировании
   useEffect(() => {
     checkAuth();
   }, []);
 
-  // Загрузка данных после авторизации
+  // Загрузка данных после авторизации (только при логине/логауте)
   useEffect(() => {
     if (user) {
       loadData();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const checkAuth = async () => {
     try {
@@ -72,9 +92,10 @@ export default function Home() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [tasksRes, statusesRes] = await Promise.all([
+      const [tasksRes, statusesRes, usersRes] = await Promise.all([
         fetch('/api/tasks'),
         fetch('/api/statuses'),
+        fetch('/api/users'),
       ]);
 
       if (!tasksRes.ok || !statusesRes.ok) {
@@ -83,9 +104,11 @@ export default function Home() {
 
       const tasksData = await tasksRes.json();
       const statusesData = await statusesRes.json();
+      const usersData = usersRes.ok ? await usersRes.json() : { data: [] };
 
       setTasks(tasksData.data || []);
       setStatuses(statusesData.data || []);
+      setUsers(usersData.data || []);
       setError(null);
     } catch (err) {
       setError('Ошибка загрузки данных. Проверьте подключение к базе данных.');
@@ -130,6 +153,7 @@ export default function Home() {
       await loadData();
       setShowModal(false);
       setError(null);
+      showSuccessToast('✓ Задача успешно создана');
     } catch (err) {
       setError('Ошибка создания задачи');
       console.error('Error creating task:', err);
@@ -157,6 +181,7 @@ export default function Home() {
       setEditingTask(null);
       setShowEditModal(false);
       setError(null);
+      showSuccessToast('✓ Задача успешно обновлена');
     } catch (err) {
       setError('Ошибка обновления задачи');
       console.error('Error updating task:', err);
@@ -177,6 +202,7 @@ export default function Home() {
 
       await loadData();
       setError(null);
+      showSuccessToast('✓ Задача удалена');
     } catch (err) {
       setError('Ошибка удаления задачи');
       console.error('Error deleting task:', err);
@@ -202,6 +228,7 @@ export default function Home() {
 
       await loadData();
       setError(null);
+      showSuccessToast('✓ Статус задачи обновлён');
     } catch (err) {
       setError('Ошибка изменения статуса');
       console.error('Error updating status:', err);
@@ -214,6 +241,19 @@ export default function Home() {
       setEditingTask(task);
       setShowEditModal(true);
     }
+  };
+
+  const handleUpdateProfile = async (data: ProfileData) => {
+    // Запрос уже отправлен в EditProfileModal, здесь только показываем toast
+    showSuccessToast('✓ Запрос на изменение профиля отправлен');
+  };
+
+  const handleAvatarUpdate = (newAvatar: string) => {
+    // Обновляем только аватар пользователя без полной перезагрузки
+    if (user) {
+      setUser({ ...user, avatar: newAvatar });
+    }
+    showSuccessToast('✓ Аватар успешно обновлён');
   };
 
   if (loading) {
@@ -263,6 +303,9 @@ export default function Home() {
         user={user}
         onLogout={handleLogout}
         onLoginClick={() => {}}
+        onSearchClick={() => setShowSearch(!showSearch)}
+        onEditProfile={() => setShowEditProfile(true)}
+        onAdminClick={() => setShowAdminPanel(true)}
       />
 
       {error && (
@@ -275,13 +318,36 @@ export default function Home() {
       )}
 
       <main className={styles.main}>
-        <KanbanBoard
-          tasks={tasks}
-          statuses={statuses}
-          onEdit={handleEdit}
-          onDelete={handleDeleteTask}
-          onStatusChange={handleStatusChange}
-        />
+        {showSearch ? (
+          <div className={styles.searchPanel}>
+            <div className={styles.searchHeader}>
+              <h3>Поиск и фильтры</h3>
+              <button
+                className={styles.closeSearchButton}
+                onClick={() => setShowSearch(false)}
+              >
+                ✕ Закрыть
+              </button>
+            </div>
+            <TaskList
+              tasks={tasks}
+              statuses={statuses}
+              users={users}
+              onEdit={handleEdit}
+              onDelete={handleDeleteTask}
+              onStatusChange={handleStatusChange}
+            />
+          </div>
+        ) : (
+          <KanbanBoard
+            tasks={tasks}
+            statuses={statuses}
+            users={users}
+            onEdit={handleEdit}
+            onDelete={handleDeleteTask}
+            onStatusChange={handleStatusChange}
+          />
+        )}
       </main>
 
       <CreateTaskModal
@@ -289,6 +355,7 @@ export default function Home() {
         onClose={() => setShowModal(false)}
         onSubmit={handleCreateTask}
         statuses={statuses}
+        users={users}
       />
 
       {editingTask && (
@@ -322,11 +389,32 @@ export default function Home() {
                   priority: editingTask.priority as any,
                   status_id: editingTask.status_id,
                   due_date: editingTask.due_date || '',
+                  assigned_to: (editingTask as any).assigned_to || null,
                 }}
                 statuses={statuses}
+                users={users}
               />
             </div>
           </div>
+        </div>
+      )}
+
+      <EditProfileModal
+        isOpen={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+        onSubmit={handleUpdateProfile}
+        onAvatarUpdate={handleAvatarUpdate}
+        user={user}
+      />
+
+      <AdminPanel
+        isOpen={showAdminPanel}
+        onClose={() => setShowAdminPanel(false)}
+      />
+
+      {successToast && (
+        <div className={styles.successToast}>
+          {successToast}
         </div>
       )}
     </div>

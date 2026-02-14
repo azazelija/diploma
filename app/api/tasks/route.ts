@@ -14,7 +14,9 @@ export async function GET(request: NextRequest) {
         t.id, t.title, t.description, t.priority, t.due_date, 
         t.completed_at, t.created_at, t.updated_at,
         s.id as status_id, s.name as status_name, s.color as status_color,
+        t.created_by,
         u_created.username as created_by_name,
+        t.assigned_to,
         u_assigned.username as assigned_to_name
       FROM tasks t
       LEFT JOIN task_statuses s ON t.status_id = s.id
@@ -38,7 +40,7 @@ export async function GET(request: NextRequest) {
       paramIndex++;
     }
     
-    sql += ' ORDER BY t.created_at DESC';
+    sql += ' ORDER BY t.id DESC';
     
     const result = await query(sql, params);
     
